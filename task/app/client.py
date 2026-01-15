@@ -113,26 +113,52 @@ class DialClient:
             data = response.json()
             choices = data.get("choices", [])
             if choices:
-                content = choices[0].get("message", {}).get("content")
                 print("\n" + "="*50 + " RESPONSE " + "="*50)
-                if print_only_content:
-                    # Render content as markdown
-                    console.print(Markdown(content))
-                    print()
+                
+                # Handle multiple choices (when n > 1)
+                if len(choices) > 1:
+                    print(f"\n📊 **Generated {len(choices)} choices:**\n")
+                    for idx, choice in enumerate(choices, 1):
+                        content = choice.get("message", {}).get("content")
+                        print(f"\n{'─'*70}")
+                        print(f"**Choice {idx}/{len(choices)}:**")
+                        print(f"{'─'*70}\n")
+                        console.print(Markdown(content))
+                        if not print_only_content:
+                            print(f"\n_Finish Reason: {choice.get('finish_reason', 'N/A')}_")
+                    
+                    if not print_only_content:
+                        print(f"\n{'─'*70}")
+                        print(f"\n**Metadata:**")
+                        print(f"- Model: {data.get('model', 'N/A')}")
+                        print(f"- Total Choices: {len(choices)}")
+                        usage = data.get("usage", {})
+                        if usage:
+                            print(f"- Tokens Used: {usage.get('total_tokens', 'N/A')} (prompt: {usage.get('prompt_tokens', 'N/A')}, completion: {usage.get('completion_tokens', 'N/A')})")
+                        print()
                 else:
-                    # Display in markdown-friendly format
-                    print(f"\n**Model Response:**\n")
-                    # Render content as markdown
-                    console.print(Markdown(content))
-                    print(f"\n**Metadata:**")
-                    print(f"- Model: {data.get('model', 'N/A')}")
-                    print(f"- Finish Reason: {choices[0].get('finish_reason', 'N/A')}")
-                    usage = data.get("usage", {})
-                    if usage:
-                        print(f"- Tokens Used: {usage.get('total_tokens', 'N/A')} (prompt: {usage.get('prompt_tokens', 'N/A')}, completion: {usage.get('completion_tokens', 'N/A')})")
-                    print()
+                    # Single choice (n=1 or default)
+                    content = choices[0].get("message", {}).get("content")
+                    if print_only_content:
+                        # Render content as markdown
+                        console.print(Markdown(content))
+                        print()
+                    else:
+                        # Display in markdown-friendly format
+                        print(f"\n**Model Response:**\n")
+                        # Render content as markdown
+                        console.print(Markdown(content))
+                        print(f"\n**Metadata:**")
+                        print(f"- Model: {data.get('model', 'N/A')}")
+                        print(f"- Finish Reason: {choices[0].get('finish_reason', 'N/A')}")
+                        usage = data.get("usage", {})
+                        if usage:
+                            print(f"- Tokens Used: {usage.get('total_tokens', 'N/A')} (prompt: {usage.get('prompt_tokens', 'N/A')}, completion: {usage.get('completion_tokens', 'N/A')})")
+                        print()
+                
                 print("="*108)
-                return Message(Role.AI, content)
+                # Return the first choice for conversation continuity
+                return Message(Role.AI, choices[0].get("message", {}).get("content"))
             raise ValueError("No Choice has been present in the response")
         else:
             raise Exception(f"HTTP {response.status_code}: {response.text}")

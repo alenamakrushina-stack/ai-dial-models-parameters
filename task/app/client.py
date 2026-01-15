@@ -2,9 +2,18 @@ import json
 import os
 
 import requests
+from dotenv import load_dotenv
+from rich.console import Console
+from rich.markdown import Markdown
 
 from task.models.message import Message
 from task.models.role import Role
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize Rich console for markdown rendering
+console = Console()
 
 
 class DialClient:
@@ -107,9 +116,21 @@ class DialClient:
                 content = choices[0].get("message", {}).get("content")
                 print("\n" + "="*50 + " RESPONSE " + "="*50)
                 if print_only_content:
-                    print(content)
+                    # Render content as markdown
+                    console.print(Markdown(content))
+                    print()
                 else:
-                    print(json.dumps(data, indent=2, sort_keys=True))
+                    # Display in markdown-friendly format
+                    print(f"\n**Model Response:**\n")
+                    # Render content as markdown
+                    console.print(Markdown(content))
+                    print(f"\n**Metadata:**")
+                    print(f"- Model: {data.get('model', 'N/A')}")
+                    print(f"- Finish Reason: {choices[0].get('finish_reason', 'N/A')}")
+                    usage = data.get("usage", {})
+                    if usage:
+                        print(f"- Tokens Used: {usage.get('total_tokens', 'N/A')} (prompt: {usage.get('prompt_tokens', 'N/A')}, completion: {usage.get('completion_tokens', 'N/A')})")
+                    print()
                 print("="*108)
                 return Message(Role.AI, content)
             raise ValueError("No Choice has been present in the response")

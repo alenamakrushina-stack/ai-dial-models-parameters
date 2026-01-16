@@ -12,7 +12,7 @@ run(
     deployment_name='gpt-4o',
     print_only_content=True,
     user_message='What is an entropy in LLM\'s responses?',
-    presence_penalty=2.0,
+    presence_penalty=-2.0,
     # TODO:
     #  Use `presence_penalty` parameter with different range (-2.0 to 2.0)
 )

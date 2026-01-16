@@ -24,19 +24,19 @@ run(
     print_only_content=False,
 )
 
-# Test 2: Claude with n=2
-print("\n" + "="*80)
-print("# Test 2: Claude 3.7 Sonnet with n=2")
-print("="*80)
-print("**Question:** Why is the snow white?")
-print("**Parameter:** n=2 (generating 2 different responses)\n")
-run(
-    deployment_name='claude-3-7-sonnet@20250219',
-    user_message='Why is the snow white?',
-    n=2,
-    print_request=False,
-    print_only_content=False,
-)
+# # Test 2: Claude with n=2
+# print("\n" + "="*80)
+# print("# Test 2: Claude 3.7 Sonnet with n=2")
+# print("="*80)
+# print("**Question:** Why is the snow white?")
+# print("**Parameter:** n=2 (generating 2 different responses)\n")
+# run(
+#     deployment_name='claude-3-7-sonnet@20250219',
+#     user_message='Why is the snow white?',
+#     n=2,
+#     print_request=False,
+#     print_only_content=False,
+# )
 
 # Test 3: Gemini with n=4
 print("\n" + "="*80)

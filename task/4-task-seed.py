@@ -6,15 +6,16 @@ from task.app.main import run
 #       There's no universally "best" seed - any integer works fine. Common approaches:
 #            - For testing: Use simple values like 42, 123, or 1000
 #       Default: None or random unless specified on the LLM side
-#  User massage: Name a random animal
+#  User message: Name a random animal
 
 run(
     deployment_name='gpt-4o',
     print_only_content=True,
     temperature=2,
-    user_message='Name a random animal'
+    user_message='Name a random animal',
+    # presence_penalty=2.0,
     seed=42,
-    n=5
+    n=5,
     # TODO:
     #  1. Use `seed` parameter with value 42 (or whatever you want)
     #  2. Use `n` parameter with value 5

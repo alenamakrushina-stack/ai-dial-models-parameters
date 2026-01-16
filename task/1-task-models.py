@@ -29,9 +29,9 @@ print("# Test 2: Claude 3.7 Sonnet")
 print("="*80)
 print("**Question:** What LLMs can do?\n")
 run(
-    deployment_name='claude-3-7-sonnet@20250219',
+    deployment_name='anthropic.claude-3-7-sonnet-20250219-v1:0',
     user_message='What LLMs can do?',
-    print_request=False,
+    print_request=True,
     print_only_content=False,
 )
 

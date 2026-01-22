@@ -23,15 +23,7 @@ class DialClient:
     def __init__(self, endpoint: str, deployment_name: str):
         api_key = os.getenv('DIAL_API_KEY', '')
         if not api_key or api_key.strip() == "":
-            raise ValueError(
-                "API key cannot be null or empty. Please:\n"
-                "1. Create a .env file in the project root\n"
-                "2. Add: DIAL_API_KEY=your_actual_api_key\n"
-                "3. Get your key from: https://support.epam.com/ess?id=sc_cat_item&table=sc_cat_item&sys_id=910603f1c3789e907509583bb001310c"
-            )
-        
-        # Debug: Check if API key looks valid (print first/last few chars)
-        print(f"🔑 API Key loaded: {api_key[:8]}...{api_key[-4:] if len(api_key) > 12 else '***'}")
+            raise ValueError("API key cannot be null or empty")
 
         self._endpoint = endpoint.format(
             model=deployment_name
@@ -169,29 +161,7 @@ class DialClient:
                 return Message(Role.AI, choices[0].get("message", {}).get("content"))
             raise ValueError("No Choice has been present in the response")
         else:
-            # Better error messages for common issues
-            if response.status_code == 403:
-                raise Exception(
-                    f"❌ HTTP 403: Access Denied\n\n"
-                    f"This usually means:\n"
-                    f"1. You're not connected to EPAM VPN (required!)\n"
-                    f"2. Your API key is invalid or expired\n"
-                    f"3. Your API key doesn't have access to model: {self._endpoint}\n\n"
-                    f"Please verify:\n"
-                    f"- EPAM VPN is connected\n"
-                    f"- Your API key is correct in the .env file\n"
-                    f"- Get a new key if needed: https://support.epam.com/ess?id=sc_cat_item&table=sc_cat_item&sys_id=910603f1c3789e907509583bb001310c\n\n"
-                    f"Response: {response.text}"
-                )
-            elif response.status_code == 401:
-                raise Exception(
-                    f"❌ HTTP 401: Unauthorized\n\n"
-                    f"Your API key is missing or invalid.\n"
-                    f"Please check your .env file and ensure DIAL_API_KEY is set correctly.\n\n"
-                    f"Response: {response.text}"
-                )
-            else:
-                raise Exception(f"HTTP {response.status_code}: {response.text}")
+            raise Exception(f"HTTP {response.status_code}: {response.text}")
 
 
     def _print_request(self, request_data: dict, headers: dict):
